@@ -1,0 +1,590 @@
+% now with a modified repetition-removing script that removes the entire word if it has a repeated syllable in it.
+% how to run this: run everything in maori_functions and save it into maori_functions.rda using save.image. then run this.
+
+% echo == show code
+% include == execute code
+
+\documentclass[12pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amscd}
+\usepackage[tableposition=top]{caption}
+\usepackage{ifthen}
+\usepackage[utf8]{inputenc}
+
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{multicol,multirow}
+\usepackage{natbib,color}
+\usepackage{tipa}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+\title{Gradient M\={a}ori Phonotactics}
+\author{}
+\date{}
+\maketitle
+
+<<header,echo=FALSE>>=
+# setwd("P:/My Documents/Work/templeton/maori_paper/maori_starter_pack")
+library(psych)
+library(ndl)
+library(plyr)
+library(stringr)
+library(reshape2)
+library(tidyr)
+library(xtable)
+# load("P:/My Documents/Work/templeton/maori_paper/maori_starter_pack/maori_functions2.rda")
+setwd("/Users/pracz/Dropbox/maori_tidy")
+load("/Users/pracz/Work/NZILBB/maori/maori_functions.rda")
+@
+
+\begin{abstract}
+This paper provides a descriptive analysis of segmental distributions in the M\={a}ori lexicon. Focussing on the strict-CV subset of the lexicon, we examine co-occurrence restrictions of consonantal onsets and vowel nuclei of adjacent syllables. For consonants, we find that sequences that share the same place of articulation are under-represented. This shows a similarity avoidance effect on M\={a}ori, reported for other languages \citep{frisch2004similarity,mccarthy1986ocp}. When we correct for the presence of reduplicants in the data-set, this under-representation includes sequences of identical consonants. Sequences of identical vowels are overrepresented, even when reduplicated syllables are taken into account.  The results show that gradient phonotactic processes are operating in M\={a}ori beyond the categorical restrictions on syllable shape.
+\end{abstract}
+
+\section{Introduction}
+
+Phonotactic constraints, as originally construed in classical phonological generative models, constitute categorical restrictions on patterns of phoneme occurrence and co-occurrence.   English allows consonant codas, for example, but does not allow /h/ in coda position.    M\={a}ori does not allow codas but - unlike English - allows /\textipa{N}/ in initial position.    It is now well documented, however, that languages can also contain non-categorical phonotactic restrictions which operate in a gradient fashion.
+
+For example, a commonly reported gradient pattern regarding consonants is the Obligatory Contour Principle for Place of Articulation (OCP-Place) - a dispreference for consonants sharing a place of articulation to occur in close proximity to each other.   While the principle was first proposed to account for observed categorical constraints against such co-occurrences \citep{mccarthy1986ocp}, a gradient tendency has also subsequently been observed in many languages \citep{mccarthy1988feature,berkley2000gradient,martin2007evolving}. Across a number of languages, words having highly similar consonants in close proximity are preferred less and come up in the lexicon less often. \cite{frisch2004similarity} argue that such patterns arise from a similarity-avoidance constraint in processing that disfavours repetition. 
+
+Not only are gradient phonotactic patterns evident in language, but they are accessible to native speakers.  Many studies show that native speakers prefer nonce words that adhere well to the statistical patterns in their language (cf.\ e.g. \citealt{hay2004speech,frisch2000perception,bailey2001determinants}).   This provides further evidence that language-specific phonotactics are not solely a categorical part of linguistic competence but rather are gradient and reflect the statistics of the lexicon.
+
+This paper is a short descriptive report describing several gradient phonotactic patterns in  M\={a}ori.
+
+In terms of categorical phonotactics, M\={a}ori is relatively simple. Syllables comprise a vowel nucleus, which can be short, long or diphthongal, and a optional simplex consonantal onset. These syllables freely combine with each other (cf. \citealt{harlow2007,bauer1993}). In this respect, it differs from most languages which allow vowel-only syllables, in that these are usually only permitted word-initially. Unlike most languages, M\={a}ori vowel-vowel sequences are not broken up by epenthesis \citep{blevins2008consonant}.
+
+The probabilistic phonotactics of the language appear to be much more complex.   Some indicative patterns have been provided in simple tabulations by \cite{krupa1968maori}.   He provides summary statistics for the segmental makeup of what he calls the possible set of M\={a}ori morphemes and words. Particularly relevant to the current paper, he notes that sequences of onsets where both onsets are either \emph{alveolar} or \emph{labial} (that is, have the same place of articulation) are less frequent than sequences with a different place. He also notes that some labial consonantal sequences are absent altogether.  Krupa was writing before the term `Obligatory Contour Principle' was first used in linguistics.  Yet the tendency he notes is certainly consistent with the idea that a gradient OCP-type constraint is present in  M\={a}ori. His analysis is restricted to two syllable words, and does not take into consideration the frequencies of the individual phonemes, and whether the apparent patterns of under-representation are statistically significantly different than would be expected if phonemes combined at chance.
+
+Krupa's findings constitute an important starting point. Gradient OCP effects are reported from other languages, including Javanese, also an Austronesian language \citep{yip1988obligatory,zuraw2009diverse}. \cite{zuraw2009diverse} go on to show that these effects in Javanese are sensitive to morpheme boundaries. \cite{de1997co} finds OCP effects in M\={a}ori which mitigate against CV sequences in which both the C and V are labial. We are in fact studying the complementary case, relationships between CV sequences. 
+
+As noted in the literature on gradient OCP effects \citep{mccarthy1986ocp,pierrehumbert1993dissimilarity,frisch2004similarity}, pairs of identical consonants behave in two ways with respect to similarity avoidance. They might be avoided most markedly -- as instances of maximum similarity. Alternatively, they might seem exempted from OCP altogether. Their prevalence in such cases can be seen as a result of copying processes in the morphology. This is, of course, a relevant point in the study of OCP in M\={a}ori, as the language has a number of reduplicative processes that can create pairs of identical sequences \citep{harlow2007}.
+
+Not all of these processes are necessarily transparent and active in the language. \cite{blust2007disyllabic} convincingly argues that lexical bases in Austronesian languages are overwhelmingly bisyllabic. This means that longer M\={a}ori words -- even if they are not the obvious result of an active morphological process -- should be treated with the suspicion that they are historically morphologically complex.
+
+This body of research points us to the following questions: Are there gradient restrictions on the co-occurrence of syllables in M\={a}ori? How are these restrictions affected by synchronic and diachronic morphological processes, which are likely responsible for most longer lexical entries as well as for sequences of identical consonantal codas and vowel nuclei?
+
+In this paper, we present a simple statistical analysis of phonotactic patterns in the M\={a}ori lexicon.   We examine co-occurrence restrictions between consonants and vowels in adjacent syllables. Our analysis confirms that adjacent pairs of syllables with homorganic non-identical onsets are avoided, occurring statistically less frequently than would be expected by chance.  This occurs in all word positions, and is not restricted to two syllable words. The vowel analysis, on the other hand, shows that sequences of identical vowels are favoured. We also examine positional preferences for the distributions of different classes of segments, showing that both consonants and vowels show significant deviations from random in terms of the distribution of segments across different syllables in the word.
+
+\section{M\={a}ori Phonotactics}
+
+\subsection{Consonantal Patterns}
+
+The consonants of the language can be seen in Table \ref{table1} (c.f. \cite{krupa1968maori,harlow2007}). The labial fricative has varying realisations across speakers, with [f] being the dominant variant by a large extent \citep{maclaganking2002}. In this paper, we assume this realisation.
+
+\begin{table}[htp]
+\begin{center}
+\begin{tabular}{lllll}
+\hline
+			&	\textbf{Labial} &	\textbf{Alveolar} &	\textbf{Velar} & \textbf{Glottal} \\
+\hline
+\textbf{Plosive} 		&	p		 &	t		 &		k &	\\
+\textbf{Fricative}		&	f		 &			 &		 &h\\
+\textbf{Nasal}			&	m		 &	n		 & 	\textipa{N} &	\\
+\textbf{Tap}			&			 &r			 & &\\
+\textbf{Approximant}	& w			 &		&	 &\\
+\end{tabular}
+\caption{M\={a}ori consonants}
+\label{table1}
+\end{center}
+\end{table}%
+
+
+<<data1,echo=FALSE>>=
+cdata <- filter1(baselist)
+cdata <- filter2ForC(cdata)
+cdata <- allDigramsJen(cdata)
+cdata <- cPlace(cdata,cfeat)
+@
+
+
+<<moredata,echo=FALSE>>=
+cdatb <- filter1(baselist)
+cdatb <- filter2ForC(cdatb)
+cdatb <- posDigrams(cdatb,cdata)
+cdatb <- cPlace(cdatb,cfeat)
+cdatb <- posRatios(cdatb)
+
+cdatc <- filter1(baselist)
+cdatc <- filter2ForC(cdatc)
+cdatc <- posUnigrams(cdatc)
+cdatc <- cPlace2(cdatc,cfeat)
+
+@
+
+We extracted a list of M\={a}ori lemmata from  \cite{maori_dictionary} archived online by Victoria University of Wellington.  We extracted all headwords, and derived subwords that were subentries under the heads.  For example, {\em ahu} is listed as a headword, and words such as {\em ahunga}, {\em whakaahu}, and {\em ahuahu} were listed as associated derived items\footnote{`Ahu', {\em a heap}; `Ahunga', {\em heaping up}; `Whakaahu', {\em to make a heap}; `ahuahu', {\em to heap}.}. All of these words were included in the initial lexicon.   M\={a}ori contains a number of vowel sequences which may be pronounced as diphthongs, and also allows sequences of adjacent syllables which contain only vowels.  Because a primary interest was in dependencies between adjacent syllables, we restricted our analysis to those cases where syllabification is unambiguous, and where we could be certain that the segments of interest were in adjacent syllables:  namely, to words which do not contain any sequences of vowels, either as diphthongs or adjacent syllables.   This subset of words provided a dataset of 8950 words.   From this list we extracted a list of 22033 consonantal digrams (pairs of consonants) ignoring the intervening vowel (\textbf{C}V\textbf{C}V). 
+
+While morphological complexity undoubtedly affects the shape of these words, our main point of scrutiny is segmental patterns in the phonological word, and hence only took into consideration very broad and general patterns of word formation, such as reduplication (as will be described below).
+
+Figure \ref{posfig} shows the distribution of consonants across different syllable positions in the word.
+As the syllable positions increase, we of course have diminishing observations.  For example, all 6 syllable words also have a 2nd syllable, whereas the converse is not true.   However the rate of decrease, and the overall distribution of observations differs across phonemes.
+ Most saliently, the plosives (dashed lines) are over-represented towards the beginning of the word.   /r/ shows a unique profile.   It is under-represented in initial position, but shows high rates of occurrence as onsets to the 2nd and 3rd syllables in the word.  /m/ appears to be over-represented at the beginning of the word, whereas the other nasals are underrepresented word-inititally.
+
+It should be noted that Krupa also briefly discussed positional effects - preferences for first or second syllable in his two syllable words.  Based on simple tabulations, he observed that labials prefer to be in the initial syllable, alveolars prefer to be in the second syllable, and that velars do not display a preference.  As we have seen, rather than place of articulation, the strongest overall effect appears to be on manner of articulation - with plosives set apart from other phonemes.    In Krupa's tabulations, labials appear to prefer first position, but as we can now see, this apparent effect is not carried by all labials, and is likely driven by /m/ preferring to occur in initial position (Figure \ref{posfig}).  %Under careful statistical scrutiny, we find that initial /m/ is actually an exception to the overall significant tendency for labials to occur proportionately more later in the word than early in the word.
+Initial /m/ seems to be an exception to the overall tendency for labials to occur proportionately more later in the word than early in the word. %so sad
+
+<<consfig2code,echo=FALSE>>=
+with(cdatc[cdatc$segment=="k",], plot(observed~position,col="red", type="n", ylab="number of observations"))
+with(cdatc[cdatc$segment=="h",], lines(lowess(observed~position,f=.2),lwd=2,col="lightgrey"))
+text(.9,800, "h")
+with(cdatc[cdatc$segment=="f"], lines(lowess(observed~position, f=.2),lwd=2))
+text(.9,900, "f")
+with(cdatc[cdatc$segment=="p",], lines(lowess(observed~position, f=.2),lwd=2, lty=2,col="darkgrey"))
+text(.9,1580, "p")
+with(cdatc[cdatc$segment=="t",], lines(lowess(observed~position, f=.2),lwd=2, lty=2,col="darkgrey"))
+text(.9,1770, "t")
+with(cdatc[cdatc$segment=="k",], lines(lowess(observed~position, f=.2),lwd=2, lty=2,col="darkgrey"))
+text(.9,1710, "k")
+with(cdatc[cdatc$segment=="m",], lines(lowess(observed~position, f=.2),lwd=2))
+text(.9,1000, "m")
+with(cdatc[cdatc$segment=="n",], lines(lowess(observed~position, f=.2),lwd=2,col="lightgrey"))
+text(.9,280, "n")
+with(cdatc[cdatc$segment=="N",], lines(lowess(observed~position, f=.2),lwd=2,col="lightgrey"))
+text(.9,210, "N")
+with(cdatc[cdatc$segment=="r",], lines(lowess(observed~position, f=.2),lwd=2,col="lightgrey"))
+text(.9,550, "r")
+with(cdatc[cdatc$segment=="w",], lines(lowess(observed~position),lwd=2))
+text(.9,150, "w")
+@
+
+\begin{figure}[htbp]
+\begin{center}
+<<consfig2figure,fig=TRUE,echo=FALSE>>=
+<<consfig2code>>
+@
+\end{center}
+\caption{Positional distribution of consonants: stops (dashed) and labials (dark) each pattern together}
+\label{posfig}
+\end{figure}
+
+
+
+We next set out to test whether M\={a}ori has consistent restrictions on the co-occurrence of CV syllables as suggested by work on other languages \citep{frisch2004similarity,mccarthy1986ocp,yip1988obligatory} and the patterns found by \cite{krupa1968maori}.
+
+The \emph{observed} probability of each digram was calculated based on its frequency of occurrence in the corpus.   Following \cite{pierrehumbert1993dissimilarity}, this was contrasted with its \emph{expected} probability,  based on the observed frequency of the separate segments.  More precisely, for a digram AB, the expected value was calculated as the observed frequency of A in position 1 of all digrams, multiplied by the observed frequency of B in position 2 of all digrams, divided by the total number of digrams observed.  In this way, we could estimate the difference between \emph{observed} and \emph{expected} probability, by calculating the ratio of the observed value over the expected value.  This Observed/Expected ratio (O/E) quantifies the degree to which a combination occurs greater or lesser than would be expected by chance.  A value of 1 indicates that the combination occurs exactly with the frequency that we would expect, given the frequency of its parts.  Numbers considerably smaller than 1 indicate under-representation, and numbers considerably larger than 1 indicate overrepresentation.  The sequence f/k, for example occurs much more often than one would expect by chance.  In this case, this is no doubt due to the highly frequent prefix {\em whaka-}.
+
+The Observed/Expected ratio is one measure of over- and under-representation. Below we use various, independent measures to recognise trends of over- and under-representation in the data.
+
+<<table1,echo=FALSE>>=
+cdata2 <- cdata[,c("seg1","seg2","o.over.e")]
+missingBits <- data.frame(rbind(c("f","h",0),c("f","m",0),c("f","w",0),c("w","f",0)))
+names(missingBits) <- names(cdata2)
+cdata2 <- rbind(cdata2,missingBits)
+cdata2$seg1 <- factor(cdata2$seg1, levels = c("p","m","f","w","t","n","r","k","N","h"))
+cdata2$seg2 <- factor(cdata2$seg2, levels = c("p","m","f","w","t","n","r","k","N","h"))
+cdata2 <- spread(cdata2, seg2, o.over.e)
+asNumeric <- function(x) as.numeric(as.character(x))
+charsNumeric <- function(d) modifyList(d, lapply(d[, sapply(d, is.character)],asNumeric))
+cdata2 <- charsNumeric(cdata2)
+@
+
+\begin{table}[htbp]
+<<label=table1table,echo=FALSE,results=tex>>=
+print(xtable(cdata2), include.rownames=F, floating=F, digits=3)
+@
+\caption{Observed over Expected Ratio for Consonants in Adjacent Syllables.  The first segment in the combination is listed vertically, the second is listed horizontally. 0 reflects non-occurrence.}
+\label{tablecons}
+\end{table}
+
+Table \ref{tablecons} shows  O/E values for all consonant pairs in adjacent syllables. Consideration of the diagonal reveals no particularly strong patterns of under- or over-representation indicating that there are no strong constraints regarding sequences of identical consonants, though sequences of identical sonorants are over-represented. The pattern in the table does suggest that sequences of non-identical consonants sharing a place of articulation are dispreferred.   Indeed, if we look at the overall pattern of O/E as a function of homorganicity, we see that homorganic sequences are less likely overall. This becomes evident if we look at O/E values for consonantal place only (cf.\ Table \ref{tablecons2b}).
+
+<<table2,echo=FALSE>>=
+cdata3 <- aggregate(o.over.e ~ seg1.place + seg2.place, cdata, mean)
+cdata3$seg1.place <- factor(cdata3$seg1.place, levels = c("labial","coronal","velar"))
+cdata3$seg2.place <- factor(cdata3$seg2.place, levels = c("labial","coronal","velar"))
+cdata3 <- spread(cdata3, seg2.place, o.over.e)
+cdata4 <- aggregate(o.over.e ~ seg1.place + seg2.place, cdata[cdata$place!="ident",], mean)
+cdata4$seg1.place <- factor(cdata4$seg1.place, levels = c("labial","coronal","velar"))
+cdata4$seg2.place <- factor(cdata4$seg2.place, levels = c("labial","coronal","velar"))
+cdata4 <- spread(cdata4, seg2.place, o.over.e)
+@
+
+\begin{table}[htbp]
+<<label=table2tablea,echo=FALSE,results=tex>>=
+print(xtable(cdata3), include.rownames=F, floating=F)
+@
+\caption{Observed over Expected Ratio for Consonantal Place in Adjacent Syllables, All Consonants}
+\label{tablecons2a}
+\end{table}
+
+\begin{table}[htbp]
+<<label=table2tableb,echo=FALSE,results=tex>>=
+print(xtable(cdata4), include.rownames=F, floating=F)
+@
+\caption{Observed over Expected Ratio for Consonantal Place in Adjacent Syllables, Without Sequences of Identical Consonants}
+\label{tablecons2b}
+\end{table}
+
+O/E values for homorganic sequences (in which the two consonants share a place of articulation) are lower than for other sequences (Table \ref{tablecons2a}). This becomes even more apparent if we exclude sequences of identical consonants (Table \ref{tablecons2b}). We performed chi square tests on contingency tables for observed counts of homorganic sequences (separately for coronal, labial, and velar). We did this separately for all consonant counts and for counts excluding identical sequences. The patterns are highly significant in all cases. This, however, might be partly due to the large sample size. In order to see the effect size, we calculated the phi coefficient for each contingency table separately. The results are in Table \ref{tablecons3}.
+
+<<phitable,echo=FALSE>>=
+# all cons
+#labial
+cdata.labial <- aggregate(observed ~ seg1.labial + seg2.labial, cdata, sum)
+cdata.labial2 <- spread(cdata.labial, seg2.labial, observed)
+# chisq.test(cdata.labial2, simulate.p.value==T)  # sig beyond words
+phi.all.lab <- phi(cdata.labial2[c(1,2),c(2,3)])
+# -0.14
+# coronal
+cdata.coronal <- aggregate(observed ~ seg1.coronal + seg2.coronal, cdata, sum)
+cdata.coronal2 <- spread(cdata.coronal, seg2.coronal, observed)
+# chisq.test(cdata.coronal2, simulate.p.value==T)  # sig beyond words
+phi.all.cor <- phi(cdata.coronal2[c(1,2),c(2,3)])
+# -0.13
+# velar
+cdata.velar <- aggregate(observed ~ seg1.velar + seg2.velar, cdata, sum)
+cdata.velar2 <- spread(cdata.velar, seg2.velar, observed)
+# chisq.test(cdata.velar2, simulate.p.value==T)  # sig beyond words
+phi.all.vel <- phi(cdata.velar2[c(1,2),c(2,3)])
+# -0.12
+
+# w/o ident
+#labial
+ni.cdata.labial <- aggregate(observed ~ seg1.labial + seg2.labial, cdata[cdata$place!="ident",], sum)
+ni.cdata.labial2 <- spread(ni.cdata.labial, seg2.labial, observed)
+# chisq.test(ni.cdata.labial2, simulate.p.value==T)  # sig beyond words
+phi.noid.lab <- phi(ni.cdata.labial2[c(1,2),c(2,3)]) # jezus ereje
+# -0.27
+# coronal
+ni.cdata.coronal <- aggregate(observed ~ seg1.coronal + seg2.coronal, cdata[cdata$place!="ident",], sum)
+ni.cdata.coronal2 <- spread(ni.cdata.coronal, seg2.coronal, observed)
+# chisq.test(ni.cdata.coronal2, simulate.p.value==T) # sig beyond words
+phi.noid.cor <- phi(ni.cdata.coronal2[c(1,2),c(2,3)])
+# -0.3
+# velar
+ni.cdata.velar <- aggregate(observed ~ seg1.velar + seg2.velar, cdata[cdata$place!="ident",], sum)
+ni.cdata.velar2 <- spread(ni.cdata.velar, seg2.velar, observed)
+# chisq.test(ni.cdata.velar2, simulate.p.value==T) # sig beyond words
+phi.noid.vel <- phi(ni.cdata.velar2[c(1,2),c(2,3)])
+# -0.29
+
+phi.table <- cbind(c("","coronal","labial","velar"),
+c("all consonants",phi.all.cor,phi.all.lab,phi.all.vel),
+c("w/o identical",phi.noid.cor,phi.noid.lab,phi.noid.vel))
+@
+
+\begin{table}[htbp]
+<<label=table3table,echo=FALSE,results=tex>>=
+print(xtable(phi.table), include.rownames=F, include.colnames=F, floating=F)
+@
+\caption{Strength of the underrepresentation effect for homorganic sequences, across consonantal place for all counts and for counts excluding identical sequences}
+\label{tablecons3}
+\end{table}
+
+Note that coronal, labial, and velar sequences are avoided to roughly the same degree. This overal pattern of underrepresentation does not change when we exclude sequences of identical consonants, although its effect does become much stronger.
+
+In order to establish the statistical robustness of this observation, we stepwise fit a linear regression model on our consonant co-occurrence data using \emph{observed over expected probability} (O/E) as the outcome variable, and the phonological features of the members of the consonantal digrams and whether these shared the same place as predictors.  In this and subsequent models, we use the log of O/E, as it can have a tendency to have a long right tail. We exclude from the analysis any digrams which are not observed at all in the data-set.
+
+Since, as we noted, digrams of identical consonants behave differently, we coded \emph{place} as a factor with three levels, (i) no shared place, (ii) shared place, (iii) identical. 
+
+Since not all combinations of factors exist (a M\={a}ori consonant cannot be labial and velar at the same time, for instance), and since shared place and various phonological features  are potentially collinear, we proceeded with bottom-up stepwise regression, testing the predictors individually and combining the significant ones if possible. The best model for the consonants is a simple one, retaining the feature of place, as shown in Table \ref{tablecons4}.
+
+<<allconsmodel,echo=FALSE>>=
+fit10 <- lm(log(o.over.e) ~ place, data=cdata)
+fit10b <- lm(log(o.minus.e) ~ place, data=cdata)
+doboz <- summary(fit10)$coef
+rownames(doboz) <- c("Intercept (diff place)", "identical", "same place")
+@
+
+\begin{table}[htbp]
+<<label=table4table,echo=FALSE,results=tex>>=
+print(xtable(doboz), include.rownames=T, floating=F)
+@
+\caption{Regression model of consonantal co-occurrence in CVCV sequences}
+\label{tablecons4}
+\end{table}
+
+This confirms that sharing a place of articulation makes co-occurrence less likely. However, the repetition of the same consonant does not suffer a significant penalty.   No significant interactions were found.  This indicates that the dispreferrence for homorganic consonants is not strongly restricted to any particular class of sounds. We re-fit the model using, as the outcome variable, Observed \emph{minus} Expected as an alternative measure of underrepresentation. The effect is similar.
+
+In their study of Arabic, \cite{frisch2004similarity} demonstrate that two major factors determine consonantal co-occurrence: (i) whether the consonants are homorganic, i.e.\ share a place of articulation, as well as (ii) their general similarity, based on the number of natural classes they share. We used their measure of similarity (as implemented by Adam Albright, cf.\ \citealt{albright2008gradient}) to calculate similarities between consonantal segments in M\={a}ori, and attempted to use this similarity measure in regression models, as above. However this approach did not deliver significant discrimination above the simple model reported in table 3.   This is chiefly, we believe, because the M\={a}ori consonantal inventory is relatively small and the number of homorganic segments is low. 
+
+Because our data-set includes words longer than two syllables, it is possible that the restriction on sequences of consonants sharing place of articulation is of different strength at different positions in the word.   We thus calculated the observed/expected ratio for each consonant pair separately for each position in the word. 
+
+In Figure \ref{posoe}, we plot the observed counts of different digram types across specific positions. This plot faithfully shows the absolute values (which are diminishing). The plot shows lowess lines fit through relevant digrams.  For example, at positions 1 and 2, the lines are fit through observation counts for 69 digrams not sharing place of articulation, 16 sharing place of articulation, and 10 which are identical.  The number of digrams for which there are observations drops as we proceed through the word.  Digrams for which we have no observations are not included in the plot.   Thus, not only are the average number of observations per digram diminishing as we go through the word (as seen in the figure), so are the number of distinct digrams at each position (not visible from the figure).  Consideration of the patterns indicates that the under-representation of adjacent consonants sharing a place of articulation is robust across all positions for which data is not scarce.
+
+%In the left panel of Figure \ref{posoe}, we plot the observed counts of different digram types across specific positions. This plot faithfully shows the absolute values (which are diminishing). The right panel shows positional observed values over the expected values for that specific position. However, as counts diminish (as seen in the left panel) this calculation becomes unstable, as we can see by the divergence of values at position 5 (where overall counts drop drastically in the left panel). \peter{()}   Both plots show lowess lines fit through relevant digrams.  For example, at positions 1 and 2, the lines are fit through observation counts for 69 digrams not sharing place of articulation, 16 sharing place of articulation, and 10 which are identical.  The number of digrams for which there are observations drops as we proceed through the word.  Digrams for which we have no observations are not included in the plot.   Thus, not only are the average number of observations per digram diminishing as we go through the word (as seen in the figure), so are the number of distinct digrams at each position (not visible from the figure).  Consideration of both panels together indicates that the under-representation of adjacent consonants sharing a place of articulation is robust across all positions for which data is not scarce.
+
+
+%' <<consfig1code,echo=FALSE>>=
+%' par(mfrow=c(1,2))
+%' with(cdatb[cdatb$place=="diff.place",], plot(observed~position,type="n", ylab="pos observed", ylim=c(0,100)))
+%' with(cdatb[cdatb$place=="diff.place",], lines(lowess(observed~position,f=.2),lwd=2))
+%' with(cdatb[cdatb$place=="same.place",], lines(lowess(observed~position,f=.2),lty=2,lwd=2))
+%' with(cdatb[cdatb$place=="ident",], lines(lowess(observed~position,f=.2),lty=3,lwd=2))
+%' legend("topright", c("diff place","same place","identical"), lty=c(1,2,3))
+%' with(cdatb[cdatb$place=="diff.place",], plot(pos.o.over.e~position,type="n", ylab="pos observed over pos expected",ylim=c(0,5)))
+%' with(cdatb[cdatb$place=="diff.place",], lines(lowess(pos.o.over.e~position,f=.2),lwd=2))
+%' with(cdatb[cdatb$place=="same.place",], lines(lowess(pos.o.over.e~position,f=.2),lty=2,lwd=2))
+%' with(cdatb[cdatb$place=="ident",], lines(lowess(pos.o.over.e~position,f=.2),lty=3,lwd=2))
+%' legend("topright", c("diff place","same place","identical"), lty=c(1,2,3))
+%' @
+
+<<consfig1code,echo=FALSE>>=
+par(mfrow=c(1,1))
+with(cdatb[cdatb$place=="diff.place",], plot(observed~position,type="n", ylab="pos observed", ylim=c(0,100)))
+with(cdatb[cdatb$place=="diff.place",], lines(lowess(observed~position,f=.2),lwd=2))
+with(cdatb[cdatb$place=="same.place",], lines(lowess(observed~position,f=.2),lty=2,lwd=2))
+with(cdatb[cdatb$place=="ident",], lines(lowess(observed~position,f=.2),lty=3,lwd=2))
+legend("topright", c("diff place","same place","identical"), lty=c(1,2,3))
+@
+
+
+\begin{figure}[htbp]
+\begin{center}
+<<consfig1figure,fig=TRUE,echo=FALSE,height=7,width=8>>=
+<<consfig1code>>
+@
+\end{center}
+%\caption{Observed/Expected ratios of consonantal sequences across position in the word. Left: observed counts for a specific position. Right: observed counts for a specific position over expected counts in that specific position. }
+\caption{Observed/Expected ratios of consonantal sequences across position in the word.}
+\label{posoe}
+\end{figure}
+
+These results indicate the presence of co-occurrence restrictions that affect homorganic consonants but exempt identical ones. This is in line with the cross-linguistic pattern noted in Section 1 that co-occurrence restrictions can be upset by morphological processes that result in copying and reduplication.
+
+M\={a}ori has a large number of word-formation processes that involve the reduplication of sequences of one or two syllables \citep{krupa1968maori,harlow2007}.  Thus, while identical sequences appear not to be under-represented, it is likely that their frequency of occurrence is being bolstered by the inclusion of reduplicants in the data-set.
+
+In order to see whether the observed patterns are an artefact of reduplication patterns, we created a restricted set of consonantal digrams. This set was based on only those words that had no direct repetition of syllables or sequences of syllables in them. This conservative approach to excluding effects of reduplication ensures that we can focus on patterns of co-occurrence that are indepedent from it. 
+
+This reduces the number of digrams under consideration from 22033, to 11854. The observed and expected values of digrams change considerably in the restricted set. Specifically, sequences of identical consonants become under-represented. However, homorganic sequences also remain under-represented relative to sequences of differing places of articulation, as can be seen in Figure \ref{restcon}.
+
+<<makeevenmoredata,echo=FALSE>>=
+cdatg <- filter1NoRedupKillWord(baselist)
+cdatg <- filter2ForC(cdatg)
+cdatg <- allDigramsJen(cdatg)
+cdatg <- cPlace(cdatg,cfeat)
+@
+
+<<consfig3code,echo=FALSE>>=
+par(mfrow=c(1,2))
+with(cdata, boxplot(o.over.e~place,col=c("white","grey","darkgrey"),main="all digrams",ylim=c(0,3),ylab="obs over exp"))
+with(cdatg, boxplot(o.over.e~place,col=c("white","grey","darkgrey"),main="no sequence repetitions",ylim=c(0,3),ylab="obs over exp"))
+@
+
+\begin{figure}[htbp]
+\begin{center}
+<<consfig3figure1,fig=TRUE,echo=FALSE, height = 4, width=8>>=
+<<consfig3code>>
+@
+\end{center}
+\caption{Positional distribution of consonants}
+\label{restcon}
+\end{figure}
+
+This suggests that the pattern of M\={a}ori `suspending' positional restrictions for sequences of identical consonants is only apparent -- it is the artefact of the reduplication processes in the language. If we exclude words with reduplicated sequences, this pattern disappears and we arrive at a simpler tendency of broad homorganicity avoidance in onset sequences. This finding is consistent with earlier work on co-occurrence restrictions (cf.\ Section 1).
+
+This becomes even clearer if we look at the observed over expected ratios of consonantal pairs in the restricted set (without reduplication) in Table \ref{tableconsb}. Regression analysis reveals that, in the restricted dataset, digrams of identical and homorganic consonants pattern together \emph{vis-\`a-vis} other consonants (\ref {tablecons45}). This is true both for distributions of observed over expected and observed minus expected counts. Reordering of factor levels reveals that the observed over expected ratio for identical and homorganic consonants significantly differs from the ratio for other consonants -- their difference from each other, however, is only marginally significant (p$=$0.066).
+
+<<table1b,echo=FALSE>>=
+cdatg2 <- cdatg[,c("seg1","seg2","o.over.e")]
+missingBits2 <- data.frame(rbind(c("f","h",0),c("f","m",0),c("f","w",0),c("w","f",0), c("w","p",0)))
+names(missingBits2) <- names(cdatg2)
+cdatg2 <- rbind(cdatg2,missingBits2)
+cdatg2$seg1 <- factor(cdatg2$seg1, levels = c("p","m","f","w","t","n","r","k","N","h"))
+cdatg2$seg2 <- factor(cdatg2$seg2, levels = c("p","m","f","w","t","n","r","k","N","h"))
+cdatg2 <- spread(cdatg2, seg2, o.over.e)
+cdatg2 <- charsNumeric(cdatg2)
+@
+
+\begin{table}[htbp]
+<<label=table1btable,echo=FALSE,results=tex>>=
+print(xtable(cdatg2), include.rownames=F, floating=F, digits=3)
+@
+\caption{Observed over Expected Ratio for Consonants in Adjacent Syllables. Excluding words with reduplication patterns.  The first segment in the combination is listed vertically, the second is listed horizontally. 0 reflects non-occurrence.}
+\label{tableconsb}
+\end{table}
+
+
+<<quiteinteresting,echo=FALSE>>=
+fit10c <- lm(log(o.over.e)~place, data=cdatg)
+fit10d <- lm(log(o.minus.e)~place, data=cdatg)
+cdatg$place2 <- factor(cdatg$place, levels(cdatg$place)[c(2,1,3)])
+fit10e <- lm(log(o.over.e)~place2, data=cdatg)
+doboz2 <- summary(fit10c)$coef
+rownames(doboz2) <- c("Intercept (diff place)", "identical", "same place")
+@
+
+
+\begin{table}[htbp]
+<<label=table4btable,echo=FALSE,results=tex>>=
+print(xtable(doboz2), include.rownames=T, floating=F)
+@
+\caption{Regression model of consonantal co-occurrence in CVCV sequences -- Excluding words with reduplication patterns.}
+\label{tablecons45}
+\end{table}
+
+
+Thus, Maori shows a clear effect of OCP, in which sequences of homorganic consonants are under-represented.    This dispreference includes sequences of identical consonants.   However because of the high rate of reduplication in the lexicon, sequences of identical consonants are not under-represented in the lexicon as a whole.   In other words - sequences of identical consonants are underpresented, unless they are embedded in sequences of identical syllables.
+
+
+\subsection{Vowel patterns \label{vowels}}
+
+<<yetanotherbatchofdata,echo=FALSE>>=
+vdata <- filter1(baselist)
+vdata <- filter2ForV(vdata)
+vdata <- allDigramsJen(vdata)
+vdata <- vPlace(vdata,vfeat)
+
+vdatc <- filter1NoInitRedupWords(baselist)
+vdatc <- filter2ForV(vdatc)
+vdatc <- allDigramsJen(vdatc)
+vdatc <- vPlace(vdatc,vfeat)
+
+vdatg <- filter1NoRedupKillWord(baselist)
+vdatg <- filter2ForV(vdatg)
+vdatg <- allDigramsJen(vdatg)
+vdatg <- vPlace(vdatg,vfeat)
+
+vdate <- filter1(baselist)
+vdate <- filter2ForV(vdate)
+vdate <- posUnigrams(vdate)
+vdate <- vPlace2(vdate,vfeat)
+@
+
+We now turn to constraints on vowel position and vowel co-occurrence.   Due to the orthographic conventions of M\={a}ori, adjacent sequences of vowels indicate either a diphthong or a vowel sequence. Since these are impossible to tell apart automatically, we again restricted our analysis to non-diphthongal nuclei of adjacent CV syllables (C\textbf{V}C\textbf{V}). This also includes long vowel nuclei.   The M\={a}ori vowels are /i/, /e/, /a/, /o/, /u/, and their long equivalents.
+
+Figure \ref{posfigvowel} shows the occurrence frequencies of the different segments across different syllable positions.  As with the consonants, there is a reasonable amount of variation across distributions.    
+
+/a/ is by far the most frequent vowel.   Short vowels (dashed lines) are more frequent than long vowels (dotted lines).  Long vowels are relatively rare beyond the second syllable.   In initial position,  back vowels and low vowels appear more frequent than front vowels and high vowels.    /i/ and /e/ occur with higher frequency in the 2nd and third syllable than they do in the first.
+
+<<vowfig1code,echo=FALSE>>=
+with(vdate[vdate$segment=="a",], plot(observed~position,lwd=2,col="darkgrey", type="n", ylab="number of observations",xaxt="n"))
+axis(1,at=c(1:9))
+with(vdate[vdate$segment=="a",], lines(lowess(observed~position,f=.2),lwd=2,col="darkgrey", lty=2))
+text(.9,3000, "a")
+with(vdate[vdate$segment=="e",], lines(lowess(observed~position, f=.2),lwd=2,col="darkgrey", lty=2))
+text(.9,560, "e")
+with(vdate[vdate$segment=="i",], lines(lowess(observed~position, f=.2),lwd=2,col="darkgrey", lty=2))
+text(.9,820, "i")
+with(vdate[vdate$segment=="o",], lines(lowess(observed~position, f=.2),lwd=2,col="darkgrey", lty=2))
+text(.9,1350, "o")
+with(vdate[vdate$segment=="u",], lines(lowess(observed~position, f=.2),lwd=2,col="darkgrey", lty=2))
+text(.9,900, "u")
+with(vdate[vdate$segment=="A",], lines(lowess(observed~position, f=.2),lwd=2, lty=3))
+text(.9,1100, "A")
+with(vdate[vdate$segment=="E",], lines(lowess(observed~position, f=.2),lwd=2, lty=3))
+text(.9,40, "E")
+with(vdate[vdate$segment=="I",], lines(lowess(observed~position, f=.2),lwd=2, lty=3))
+text(.9,140, "I")
+with(vdate[vdate$segment=="O",], lines(lowess(observed~position, f=.2),lwd=2, lty=3))
+text(.9,700, "O")
+with(vdate[vdate$segment=="U",], lines(lowess(observed~position),lwd=2, lty=3))
+text(.9,450, "U")
+@
+
+\begin{figure}[htbp]
+\begin{center}
+<<vowfig1figure,fig=TRUE,echo=FALSE>>=
+<<vowfig1code>>
+@
+\end{center}
+\caption{Positional distribution of vowels. Capital letters represent long vowels}
+\label{posfigvowel}
+\end{figure}
+
+In order to study co-occurence patterns, we extracted digram frequencies of vowels in  adjacent syllables in a way similar to the extraction of consonantal digrams discussed above.  We calculated ratios of observed over expected values, and these are given in Table \ref{tablevow}. 
+
+<<vowtable1,echo=FALSE>>=
+vdata2 <- vdata[,c("seg1","seg2","o.over.e")]
+missingBits3 <- data.frame(rbind(c("E","I",0),c("E","U",0),c("I","u",0),c("I","U",0)))
+names(missingBits3) <- names(vdata2)
+vdata2 <- rbind(vdata2,missingBits3)
+vdata2$seg1 <- factor(vdata2$seg1, levels = c("i","I","e","E","o","O","u","U","a","A"))
+vdata2$seg2 <- factor(vdata2$seg2, levels = c("i","I","e","E","o","O","u","U","a","A"))
+vdata2 <- spread(vdata2, seg2, o.over.e)
+vdata2 <- charsNumeric(vdata2)
+@
+
+\begin{table}[htbp]
+<<label=table5table,echo=FALSE,results=tex>>=
+print(xtable(vdata2), include.rownames=F, floating=F, digits=3)
+@
+\caption{Observed over Expected Ratio for Vowels in Adjacent Syllables.    The first segment in the combination is listed vertically, the second is listed horizontally. 0 reflects non-occurrence. Capitalisation indicates a long vowel.}
+\label{tablevow}
+\end{table}
+
+Examination of the diagonal of this table reveals that identical vowels appear consistently over-represented in adjacent syllables.  All sequences of adjacent identical vowels are more frequent than one would expect based on the frequencies of occurrence of the phonemes alone.   /i:/ and /e:/ are relatively rare in isolation.   This fact contributes to the large O/E values for co-occurrence.   They are quite rare phonemes, and thus the fact that they occur quite frequently in combination amounts to a large degree of statistical over-representation. 
+
+We stepwise fit a linear regression model on the vowel co-occurrence data using \emph{observed over expected probability} as the outcome variable, and the phonological features of the members of the vowel digrams and whether these shared the same place and whether they were identical as predictors. The model returns a significant three-way interaction, indicating a significantly large degree of over-representation of sequences of adjacent identical long front vowels. The model shows that sequences of identical vowels are over-represented in general.
+
+<<thevowelmodels,echo=FALSE>>=
+fit1old <- lm(o.over.e ~ has.back + has.front * has.long * ident, data=vdata)
+# summary(fit1)
+
+fit2old <- lm(o.over.e ~ has.back + has.front * has.long * ident, data=vdatc)
+# summary(fit2)
+
+fit3old <- lm(o.over.e ~ has.back + has.front + has.long + ident, data=vdatg) # in fact pairs of front long ident vowels 
+
+<<thevowelmodels,echo=FALSE>>=
+fit1 <- lm(log(o.over.e) ~ has.front * has.long * ident, data=vdata)
+
+# summary(fit1)
+
+fit2 <- lm(log(o.over.e) ~ has.back + has.front * has.long * ident, data=vdatc)
+# summary(fit2)
+fit3b <- lm(log(o.over.e) ~ has.back + has.front * has.long * ident, data=vdatg)
+# summary(fit3b)
+fit3 <- lm(log(o.over.e) ~ident, data=vdatg) # in fact pairs of front long ident vowels 
+# summary(fit3)
+doboz3 <- summary(fit3)$coef
+rownames(doboz3) <- c("Intercept (different segments)", "identical segments")
+@
+
+In order to determine whether the overrepresentation of identical vowels is related to reduplication, we excluded all words with repeated sequences from our material -- restricting the set of word chunks the same way as we did for the consonants.   This reduced the total vowel digrams under consideration from 22664 to 12409.  We recalculated the O/E.   The values are shown in Table \ref{tablevow2}.  
+
+<<vowtable2,echo=FALSE>>=
+vdatg2 <- vdatg[,c("seg1","seg2","o.over.e")]
+missingBits4 <- data.frame(rbind(c("E","E",0),c("E","I",0),c("E","U",0),c("I","E",0),c("I","I",0),c("I","u",0),c("I","U",0)))
+names(missingBits4) <- names(vdatg2)
+vdatg2 <- rbind(vdatg2,missingBits4)
+vdatg2$seg1 <- factor(vdatg2$seg1, levels = c("i","I","e","E","o","O","u","U","a","A"))
+vdatg2$seg2 <- factor(vdatg2$seg2, levels = c("i","I","e","E","o","O","u","U","a","A"))
+vdatg2 <- spread(vdatg2, seg2, o.over.e)
+vdatg2 <- charsNumeric(vdatg2)
+@
+
+\begin{table}[htbp]
+<<label=table6table,echo=FALSE,results=tex>>=
+print(xtable(vdatg2), include.rownames=F, floating=F, digits=3)
+@
+\caption{Observed over Expected Ratio for Vowels in Adjacent Syllables, excluding repeated sequences.    The first segment in the combination is listed vertically, the second is listed horizontally. 0 reflects non-occurrence.}
+\label{tablevow2}
+\end{table}
+
+This changes the profile quite considerably.   While pairs of identical vowels still remain somewhat over-represented, it appears that the very strong tendency for identical vowels to occur in adjacent syllables was to a large degree carried by syllables that also share onsets.  Notably, sequences of two /i:/s and two /e:/s are now unattested.  Their over-representation in the larger data-set was driven entirely by words in which they occurred in adjacent identical syllables.    This goes some way to explaining the previously observed interaction - in which sequences of identical long front vowels were over-represented.
+
+Next we fit a simple linear regression model to the restricted data-set in table 7, testing the phonological characteristics of the vowel sequences.  The resulting model is shown in Table \ref{tablevow3}.   It is very simple, revealing a remaining significant over-representation of sequences of identical vowels.  We re-fit the model using \emph{observed minus expected} as the outcome variable. That model shows the vowel identity factor to be highly significant.
+
+\begin{table}[htbp]
+<<label=vowmodel,echo=FALSE,results=tex>>=
+print(xtable(doboz3), include.rownames=T, floating=F)
+@
+\caption{Regression model on the restricted set}
+\label{tablevow3}
+\end{table}
+
+This means we have strong support for the overrepresentation of identical vowel sequences even if we remove all sequences of identical syllables. 
+
+\section{Discussion}
+
+This paper builds on the simple tabulations provided by \cite{krupa1968maori}, which examined some frequencies of occurrence and co-occurrence in two syllable words.   We extend this analysis to include longer words, and conduct statistical analysis to identify the degree to which co-occurrence patterns deviate significantly from chance.
+
+Our analysis reveals consistent and statistically significant devaiations from chance in the co-occurrence of M\={a}ori consonants and vowels.  Adjacent onsets sharing the same place of articulation are avoided.  Adjacent identical vowels are overrepresented.  Both vowels and consonants show positional effects in terms of their overall distributions across syllables.
+
+The consonant analysis confirms that the trends reported in \cite{krupa1968maori} are robust, and do appear to be a manifestation of OCP-type pattern. This closely compares to the gradient avoidance of similarity observed in other languages \citep{frisch2004similarity,martin2007evolving}.   By way of explanation for such patterns, \cite{frisch2004similarity} point to work on the effect of repetition on speech production and speech processing, showing that the repetition of segments is taxing to language processing and increases the chance of parsing errors. They show that gradient similarity avoidance in the lexicon (wherein sequences of similar segments occur less often than they would if co-occurrence were based on chance) is relatively common, citing the example of \cite{pierrehumbert2006syllable}, who demonstrates that triconsonantal clusters in English morphemes are more restricted than similar clusters on morpheme boundaries.   \cite{mccarthy1986ocp} and \cite{frisch2004similarity} discuss the fact that languages vary in with respect to the treatment of identical consonants.  Totally identical consonants are sometimes permitted by languages displaying OCP-constraints, and sometimes excluded.    In M\={a}ori, adjacent identical consonants are under-represented in the monomorphemic lexicon.  However they are well represented when sequences of identical syllables are included.
+
+If CV syllables do not combine freely, as our results indicate, this could also be helpful for word segmentation, since the transitional probabilities of syllables within and across word boundaries will be different \citep{harris1955}, a cue which adult listeners can exploit to locate word boundaries (cf.\ e.g.\ \citealt{saffranetal1996b,cairnsetal1997}).  Many segmentation algorithms rely on identification of low probability diphones.  Our results however suggest that, if M\={a}ori listeners use phonotactic patterns to segment the speech stream at all, then the relevant patterns extend over greater distances than the diphone.
+
+This simple examination  reveals that M\={a}ori phonotactics are more complex than its simple syllable structure might imply, and that a number of significant statistical tendencies underlie the phonological grammar.   We have not yet examined longer-distance dependencies, nor whether there are patterned constraints that occur within the syllable.  Considerable future work also awaits with respect to word shapes that contain sequences of multiple vowels.
+
+According to our analysis, M\={a}ori restricts the co-occurrence of homorganic codas, with the exception of identical ones. As such, it fits into the cross-linguistic typology of co-occurrence restrictions \citep{mccarthy1988feature}. The exception of identical consonants disappears in a subset of the vocabulary that excludes words containing reduplicated sequences. This supports the assumption that the apparent exceptionality of identical consonants results from morphological processes in the language (cf.\ e.g.\ \citealt{yip1995repetition}).
+
+What remains clear is that while M\={a}ori phonotactics may appear simple on the surface, a number of gradient patterns and restrictions work together to shape the M\={a}ori lexicon.  An interesting question for future experimental work is how much implicit knowledge of these gradient patterns speakers of M\={a}ori might have.
+
+
+\bibliographystyle{unified}
+\bibliography{maori}
+\end{document}

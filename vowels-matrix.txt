@@ -1,0 +1,11 @@
+	long	front	back	close	open	round
+i	F	T	F	T	F	F
+u	F	F	T	T	F	T
+e	F	T	F	F	T	F
+o	F	F	T	F	T	T
+a	F	F	F	F	T	F
+I	T	T	F	T	F	F
+U	T	F	T	T	F	T
+E	T	T	F	F	T	F
+O	T	F	T	F	T	T
+A	T	F	F	F	T	F
