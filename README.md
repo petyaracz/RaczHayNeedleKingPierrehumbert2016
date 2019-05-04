@@ -11,3 +11,6 @@ Péter Rácz, Jennifer Hay, Jeremy Needle, Jeanette King & Janet B. Pierrehumber
 - maori_paper_to_print.Rnw paper and code in Sweave
 - maori.bib references for paper
 - maori_paper_final_doc.docx final submitted version in docx
+
+[![DOI](https://zenodo.org/badge/184551365.svg)](https://zenodo.org/badge/latestdoi/184551365)
+
